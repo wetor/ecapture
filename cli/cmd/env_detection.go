@@ -30,8 +30,8 @@ func detectKernel() error {
 	}
 	switch runtime.GOARCH {
 	case "amd64":
-		if kv < kernel.VersionCode(4, 18, 0) {
-			return fmt.Errorf("the Linux/Android Kernel version %v (x86_64) is not supported. Requires a version greater than 4.18", kv)
+		if kv < kernel.VersionCode(3, 10, 0) {
+			return fmt.Errorf("the Linux/Android Kernel version %v (x86_64) is not supported. Requires a version greater than 3.10", kv)
 		}
 	case "arm64":
 		if kv < kernel.VersionCode(5, 5, 0) {
