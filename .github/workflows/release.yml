@@ -3,7 +3,9 @@ on:
   push:
     tags:
       - "v*"
-
+  watch:
+    types: started
+    
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -12,6 +14,7 @@ jobs:
 
   build-on-ubuntu2204:
     runs-on: ubuntu-22.04
+    if: github.event.repository.owner.id == github.event.sender.id
     name: release Linux/Android Version (amd64/arm64)
     steps:
       - uses: actions/setup-go@v5
@@ -100,6 +103,7 @@ jobs:
           make -f builder/Makefile.release publish SNAPSHOT_VERSION=${{ github.ref_name }}
   build-docker-image:
     runs-on: ubuntu-22.04
+    if: github.event.repository.owner.id == github.event.sender.id
     steps:
       - name: Checkout
         uses: actions/checkout@v4
