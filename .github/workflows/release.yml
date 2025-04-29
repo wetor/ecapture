@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - "v*"
-  watch:
-    types: started
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +12,6 @@ jobs:
 
   build-on-ubuntu2204:
     runs-on: ubuntu-22.04
-    if: github.event.repository.owner.id == github.event.sender.id
     name: release Linux/Android Version (amd64/arm64)
     steps:
       - uses: actions/setup-go@v5
@@ -71,13 +68,7 @@ jobs:
       - name: Generate Release Notes
         id: release_notes
         run: |
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/releases/generate-notes \
-            -f tag_name=${{ github.ref_name }} \
-            -f previous_tag_name=${{ steps.previoustag.outputs.PREVIOUS_TAG }} \
-            > release_notes.json
+          echo "{}" > release_notes.json
           echo "NOTES<<EOF" >> $GITHUB_OUTPUT
           jq -r .body release_notes.json >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -103,7 +94,6 @@ jobs:
           make -f builder/Makefile.release publish SNAPSHOT_VERSION=${{ github.ref_name }}
   build-docker-image:
     runs-on: ubuntu-22.04
-    if: github.event.repository.owner.id == github.event.sender.id
     steps:
       - name: Checkout
         uses: actions/checkout@v4
